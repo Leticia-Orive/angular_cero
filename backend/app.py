@@ -34,7 +34,7 @@ class User(db.Model):
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
 
-# Modelo de Viajes
+# Modelo de Viajes (Catálogo de viajes disponibles)
 class Travel(db.Model):
     __tablename__ = 'travels'
     
@@ -47,7 +47,36 @@ class Travel(db.Model):
     longitude = db.Column(db.Float, nullable=False)
     image_url = db.Column(db.String(500))
     price = db.Column(db.Float)
+    country = db.Column(db.String(100))
+    duration = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+# Modelo de Viajes del Usuario (Mis Viajes)
+class UserTravel(db.Model):
+    __tablename__ = 'user_travels'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    travel_id = db.Column(db.Integer, db.ForeignKey('travels.id'), nullable=False)
+    booking_date = db.Column(db.DateTime, default=db.func.current_timestamp())
+    status = db.Column(db.String(50), default='booked')  # booked, completed, cancelled
+    notes = db.Column(db.Text)
+    
+    # Relaciones
+    user = db.relationship('User', backref='user_travels')
+    travel = db.relationship('Travel', backref='user_travels')
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'travel_id': self.travel_id,
+            'booking_date': self.booking_date.isoformat() if self.booking_date else None,
+            'status': self.status,
+            'notes': self.notes,
+            'travel': self.travel.to_dict() if self.travel else None,
+            'user': {'id': self.user.id, 'name': self.user.name, 'email': self.user.email} if self.user else None
+        }
     
     def to_dict(self):
         return {
@@ -60,6 +89,8 @@ class Travel(db.Model):
             'longitude': self.longitude,
             'image_url': self.image_url,
             'price': self.price,
+            'country': self.country,
+            'duration': self.duration,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
 
@@ -205,6 +236,74 @@ def delete_travel(travel_id):
         db.session.delete(travel)
         db.session.commit()
         return jsonify({'message': 'Travel deleted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
+
+# ========== RUTAS DE MIS VIAJES (USER TRAVELS) ==========
+
+@app.route('/api/my-travels', methods=['GET'])
+def get_my_travels():
+    """Obtener todos los viajes del usuario (por defecto user_id=1)"""
+    try:
+        user_id = request.args.get('user_id', 1, type=int)
+        user_travels = UserTravel.query.filter_by(user_id=user_id).order_by(UserTravel.booking_date.desc()).all()
+        return jsonify([ut.to_dict() for ut in user_travels]), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/my-travels', methods=['POST'])
+def add_to_my_travels():
+    """Agregar un viaje a 'Mis Viajes'"""
+    try:
+        data = request.get_json()
+        user_id = data.get('user_id', 1)
+        travel_id = data.get('travel_id')
+        
+        # Verificar si ya existe
+        existing = UserTravel.query.filter_by(user_id=user_id, travel_id=travel_id).first()
+        if existing:
+            return jsonify({'error': 'Este viaje ya está en tus viajes', 'user_travel': existing.to_dict()}), 409
+        
+        new_user_travel = UserTravel(
+            user_id=user_id,
+            travel_id=travel_id,
+            status=data.get('status', 'booked'),
+            notes=data.get('notes', '')
+        )
+        db.session.add(new_user_travel)
+        db.session.commit()
+        return jsonify(new_user_travel.to_dict()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/my-travels/<int:user_travel_id>', methods=['DELETE'])
+def remove_from_my_travels(user_travel_id):
+    """Eliminar un viaje de 'Mis Viajes'"""
+    try:
+        user_travel = UserTravel.query.get_or_404(user_travel_id)
+        db.session.delete(user_travel)
+        db.session.commit()
+        return jsonify({'message': 'Travel removed from your travels'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/my-travels/<int:user_travel_id>', methods=['PUT'])
+def update_my_travel(user_travel_id):
+    """Actualizar el estado o notas de un viaje en 'Mis Viajes'"""
+    try:
+        user_travel = UserTravel.query.get_or_404(user_travel_id)
+        data = request.get_json()
+        
+        if 'status' in data:
+            user_travel.status = data['status']
+        if 'notes' in data:
+            user_travel.notes = data['notes']
+            
+        db.session.commit()
+        return jsonify(user_travel.to_dict()), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 400

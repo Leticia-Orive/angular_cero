@@ -19,7 +19,9 @@ def seed_travels():
                 'latitude': 48.8566,
                 'longitude': 2.3522,
                 'image_url': 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=500',
-                'price': 1500.00
+                'price': 1500.00,
+                'country': 'Francia',
+                'duration': 7
             },
             {
                 'destination': 'Tokio, Japón',
@@ -29,7 +31,9 @@ def seed_travels():
                 'latitude': 35.6762,
                 'longitude': 139.6503,
                 'image_url': 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=500',
-                'price': 2200.00
+                'price': 2200.00,
+                'country': 'Japón',
+                'duration': 10
             },
             {
                 'destination': 'Nueva York, EE.UU.',
@@ -39,7 +43,9 @@ def seed_travels():
                 'latitude': 40.7128,
                 'longitude': -74.0060,
                 'image_url': 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=500',
-                'price': 1800.00
+                'price': 1800.00,
+                'country': 'Estados Unidos',
+                'duration': 7
             },
             {
                 'destination': 'Roma, Italia',
@@ -49,7 +55,9 @@ def seed_travels():
                 'latitude': 41.9028,
                 'longitude': 12.4964,
                 'image_url': 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=500',
-                'price': 1400.00
+                'price': 1400.00,
+                'country': 'Italia',
+                'duration': 7
             },
             {
                 'destination': 'Barcelona, España',
@@ -59,7 +67,9 @@ def seed_travels():
                 'latitude': 41.3851,
                 'longitude': 2.1734,
                 'image_url': 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=500',
-                'price': 1200.00
+                'price': 1200.00,
+                'country': 'España',
+                'duration': 7
             },
             {
                 'destination': 'Bali, Indonesia',
@@ -69,7 +79,9 @@ def seed_travels():
                 'latitude': -8.3405,
                 'longitude': 115.0920,
                 'image_url': 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=500',
-                'price': 1600.00
+                'price': 1600.00,
+                'country': 'Indonesia',
+                'duration': 14
             },
             {
                 'destination': 'Machu Picchu, Perú',
@@ -79,7 +91,9 @@ def seed_travels():
                 'latitude': -13.1631,
                 'longitude': -72.5450,
                 'image_url': 'https://images.unsplash.com/photo-1587595431973-160d0d94add1?w=500',
-                'price': 1300.00
+                'price': 1300.00,
+                'country': 'Perú',
+                'duration': 7
             },
             {
                 'destination': 'Dubái, EAU',
@@ -89,7 +103,9 @@ def seed_travels():
                 'latitude': 25.2048,
                 'longitude': 55.2708,
                 'image_url': 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=500',
-                'price': 2000.00
+                'price': 2000.00,
+                'country': 'Emiratos Árabes Unidos',
+                'duration': 7
             },
             {
                 'destination': 'Santorini, Grecia',
@@ -99,7 +115,9 @@ def seed_travels():
                 'latitude': 36.3932,
                 'longitude': 25.4615,
                 'image_url': 'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=500',
-                'price': 1700.00
+                'price': 1700.00,
+                'country': 'Grecia',
+                'duration': 7
             },
             {
                 'destination': 'Islandia',
@@ -109,7 +127,9 @@ def seed_travels():
                 'latitude': 64.9631,
                 'longitude': -19.0208,
                 'image_url': 'https://images.unsplash.com/photo-1504829857797-ddff29c27927?w=500',
-                'price': 2500.00
+                'price': 2500.00,
+                'country': 'Islandia',
+                'duration': 10
             },
             {
                 'destination': 'Cancún, México',
@@ -119,7 +139,9 @@ def seed_travels():
                 'latitude': 21.1619,
                 'longitude': -86.8515,
                 'image_url': 'https://images.unsplash.com/photo-1568402102990-bc541580b59f?w=500',
-                'price': 1100.00
+                'price': 1100.00,
+                'country': 'México',
+                'duration': 7
             },
             {
                 'destination': 'Londres, Reino Unido',
@@ -129,7 +151,9 @@ def seed_travels():
                 'latitude': 51.5074,
                 'longitude': -0.1278,
                 'image_url': 'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=500',
-                'price': 1600.00
+                'price': 1600.00,
+                'country': 'Reino Unido',
+                'duration': 7
             },
             {
                 'destination': 'Ámsterdam, Países Bajos',
@@ -139,7 +163,9 @@ def seed_travels():
                 'latitude': 52.3676,
                 'longitude': 4.9041,
                 'image_url': 'https://images.unsplash.com/photo-1534351590666-13e3e96b5017?w=500',
-                'price': 1300.00
+                'price': 1300.00,
+                'country': 'Países Bajos',
+                'duration': 5
             },
             {
                 'destination': 'Praga, República Checa',
@@ -149,7 +175,9 @@ def seed_travels():
                 'latitude': 50.0755,
                 'longitude': 14.4378,
                 'image_url': 'https://images.unsplash.com/photo-1541849546-216549ae216d?w=500',
-                'price': 900.00
+                'price': 900.00,
+                'country': 'República Checa',
+                'duration': 5
             },
             {
                 'destination': 'Sídney, Australia',
@@ -159,7 +187,9 @@ def seed_travels():
                 'latitude': -33.8688,
                 'longitude': 151.2093,
                 'image_url': 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=500',
-                'price': 2800.00
+                'price': 2800.00,
+                'country': 'Australia',
+                'duration': 15
             }
         ]
         

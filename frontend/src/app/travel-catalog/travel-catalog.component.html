@@ -1,0 +1,151 @@
+<div class="travel-catalog">
+  <div class="header">
+    <h1>Catálogo de Viajes</h1>
+    <p class="subtitle">Descubre y agrega viajes increíbles a tu lista</p>
+  </div>
+
+  <div *ngIf="loading" class="loading">Cargando viajes...</div>
+  <div *ngIf="error" class="error-message">{{ error }}</div>
+  <div *ngIf="successMessage" class="success-message">{{ successMessage }}</div>
+
+  <div class="main-content">
+    <!-- Filtros -->
+    <div class="filters-sidebar">
+      <div class="filters-card">
+        <h3>Filtrar Viajes</h3>
+
+        <div class="filter-group">
+          <label>Buscar:</label>
+          <input
+            type="text"
+            class="filter-input"
+            placeholder="Destino, país..."
+            [value]="searchTerm"
+            (input)="onSearchChange($event)"
+          />
+        </div>
+
+        <div class="filter-group">
+          <label>País:</label>
+          <select class="filter-select" [value]="selectedCountry" (change)="onCountryChange($event)">
+            <option value="">Todos</option>
+            <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Precio máximo: ${{ currentMaxPrice }}</label>
+          <input
+            type="range"
+            class="filter-range"
+            [min]="0"
+            [max]="maxPrice"
+            [value]="currentMaxPrice"
+            (input)="onPriceChange($event)"
+          />
+        </div>
+
+        <button class="btn btn-reset" (click)="resetFilters()">
+          Limpiar Filtros
+        </button>
+      </div>
+
+      <!-- Mis Viajes Sidebar -->
+      <div class="my-travels-card">
+        <h3>Mis Viajes ({{ myTravels.length }})</h3>
+        <div class="my-travels-list">
+          <div *ngIf="myTravels.length === 0" class="empty-message">
+            <p>Aún no has agregado viajes</p>
+          </div>
+          <div *ngFor="let userTravel of myTravels" class="my-travel-item">
+            <div class="my-travel-info">
+              <strong>{{ userTravel.travel?.destination }}</strong>
+              <span class="my-travel-country">{{ userTravel.travel?.country }}</span>
+              <span class="my-travel-price">${{ userTravel.travel?.price }}</span>
+            </div>
+            <button
+              class="btn-remove-small"
+              (click)="removeFromMyTravels(userTravel.id)"
+              title="Eliminar">
+              ✕
+            </button>
+          </div>
+        </div>
+        <a routerLink="/travels" class="btn btn-view-all">Ver Todos Mis Viajes</a>
+      </div>
+    </div>
+
+    <!-- Catálogo de Viajes -->
+    <div class="catalog-section">
+      <div class="results-header">
+        <h2>Viajes Disponibles</h2>
+        <span class="results-count">{{ filteredTravels.length }} viajes</span>
+      </div>
+
+      <div class="travels-grid" *ngIf="!loading && filteredTravels.length > 0">
+        <div class="travel-card" *ngFor="let travel of filteredTravels">
+          <div class="card-image">
+            <img [src]="travel.image_url || 'https://via.placeholder.com/400x250?text=' + travel.destination"
+                 [alt]="travel.destination">
+            <div class="card-badge" *ngIf="isInMyTravels(travel.id)">
+              ✓ En Mis Viajes
+            </div>
+          </div>
+
+          <div class="card-content">
+            <div class="card-header">
+              <h3>{{ travel.destination }}</h3>
+              <span class="country-badge" *ngIf="travel.country">{{ travel.country }}</span>
+            </div>
+
+            <p class="description">{{ travel.description }}</p>
+
+            <div class="travel-details">
+              <div class="detail-row">
+                <span class="detail-icon">📅</span>
+                <span class="detail-text">{{ travel.start_date | date:'dd/MM/yyyy' }} - {{ travel.end_date | date:'dd/MM/yyyy' }}</span>
+              </div>
+
+              <div class="detail-row" *ngIf="travel.duration">
+                <span class="detail-icon">⏱️</span>
+                <span class="detail-text">{{ travel.duration }} días</span>
+              </div>
+
+              <div class="detail-row">
+                <span class="detail-icon">💰</span>
+                <span class="detail-text price">{{ travel.price | currency }}</span>
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <button
+                class="btn btn-view"
+                [routerLink]="['/travels', travel.id]">
+                Ver Detalles
+              </button>
+
+              <button
+                *ngIf="!isInMyTravels(travel.id)"
+                class="btn btn-add"
+                (click)="addToMyTravels(travel)">
+                + Agregar a Mis Viajes
+              </button>
+
+              <button
+                *ngIf="isInMyTravels(travel.id)"
+                class="btn btn-remove"
+                (click)="removeFromMyTravels(getUserTravelId(travel.id))">
+                ✓ Ya está en Mis Viajes
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-results" *ngIf="!loading && filteredTravels.length === 0">
+        <p>No se encontraron viajes con esos criterios</p>
+        <button class="btn btn-primary" (click)="resetFilters()">Ver Todos</button>
+      </div>
+    </div>
+  </div>
+</div>
