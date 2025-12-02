@@ -1,0 +1,100 @@
+<div class="admin-dashboard">
+  <h1>Panel de Administración</h1>
+
+  <div *ngIf="loading" class="loading">Cargando datos...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div class="dashboard-section">
+    <div class="section-header">
+      <h2>Gestión de Usuarios</h2>
+      <button class="btn btn-primary" routerLink="/users/new">
+        Nuevo Usuario
+      </button>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <h3>Total Usuarios</h3>
+        <p class="stat-number">{{ users.length }}</p>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Fecha de Registro</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of users">
+            <td>{{ user.id }}</td>
+            <td>{{ user.name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.created_at | date:'short' }}</td>
+            <td>
+              <button class="btn btn-small btn-edit" routerLink="/users/edit/{{ user.id }}">
+                Editar
+              </button>
+              <button class="btn btn-small btn-delete" (click)="deleteUser(user.id!)">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="dashboard-section">
+    <div class="section-header">
+      <h2>Gestión de Viajes</h2>
+      <button class="btn btn-primary" routerLink="/travels/new">
+        Nuevo Viaje
+      </button>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card">
+        <h3>Total Viajes</h3>
+        <p class="stat-number">{{ travels.length }}</p>
+      </div>
+    </div>
+
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Destino</th>
+            <th>País</th>
+            <th>Precio</th>
+            <th>Duración</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let travel of travels">
+            <td>{{ travel.id }}</td>
+            <td>{{ travel.destination }}</td>
+            <td>{{ travel.country || 'N/A' }}</td>
+            <td>{{ travel.price | currency }}</td>
+            <td>{{ travel.duration ? travel.duration + ' días' : 'N/A' }}</td>
+            <td>
+              <button class="btn btn-small btn-edit" routerLink="/travels/edit/{{ travel.id }}">
+                Editar
+              </button>
+              <button class="btn btn-small btn-delete" (click)="deleteTravel(travel.id!)">
+                Eliminar
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

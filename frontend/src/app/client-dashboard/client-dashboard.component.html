@@ -1,0 +1,94 @@
+<div class="client-dashboard">
+  <div class="header">
+    <h1>Descubre tu Próximo Destino</h1>
+    <p class="subtitle">Encuentra el viaje perfecto para ti</p>
+  </div>
+
+  <div *ngIf="loading" class="loading">Cargando viajes...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div class="filters-section">
+    <div class="filters-card">
+      <h3>Filtros de Búsqueda</h3>
+
+      <div class="filter-group">
+        <label>Buscar:</label>
+        <input
+          type="text"
+          class="filter-input"
+          placeholder="Buscar por destino, país o descripción..."
+          [value]="searchTerm"
+          (input)="onSearchChange($event)"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label>País:</label>
+        <select class="filter-select" [value]="selectedCountry" (change)="onCountryChange($event)">
+          <option value="">Todos los países</option>
+          <option *ngFor="let country of countries" [value]="country">{{ country }}</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>Precio máximo: ${{ currentMaxPrice }}</label>
+        <input
+          type="range"
+          class="filter-range"
+          [min]="0"
+          [max]="maxPrice"
+          [value]="currentMaxPrice"
+          (input)="onPriceChange($event)"
+        />
+      </div>
+
+      <button class="btn btn-reset" (click)="resetFilters()">
+        Limpiar Filtros
+      </button>
+    </div>
+  </div>
+
+  <div class="results-header">
+    <h2>Viajes Disponibles</h2>
+    <span class="results-count">{{ filteredTravels.length }} viajes encontrados</span>
+  </div>
+
+  <div class="travels-grid" *ngIf="!loading && filteredTravels.length > 0">
+    <div class="travel-card" *ngFor="let travel of filteredTravels">
+      <div class="card-header">
+        <h3>{{ travel.destination }}</h3>
+        <span class="country-badge" *ngIf="travel.country">{{ travel.country }}</span>
+      </div>
+
+      <div class="card-body">
+        <p class="description" *ngIf="travel.description">{{ travel.description }}</p>
+
+        <div class="travel-details">
+          <div class="detail-item" *ngIf="travel.duration">
+            <span class="detail-label">Duración:</span>
+            <span class="detail-value">{{ travel.duration }} días</span>
+          </div>
+
+          <div class="detail-item">
+            <span class="detail-label">Precio:</span>
+            <span class="detail-value price">{{ travel.price | currency }}</span>
+          </div>
+        </div>
+
+        <div class="card-actions">
+          <button class="btn btn-details" routerLink="/travels/{{ travel.id }}">
+            Ver Detalles
+          </button>
+          <button class="btn btn-book">
+            Reservar Ahora
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="no-results" *ngIf="!loading && filteredTravels.length === 0">
+    <p>No se encontraron viajes que coincidan con tus criterios de búsqueda.</p>
+    <button class="btn btn-primary" (click)="resetFilters()">Ver Todos los Viajes</button>
+  </div>
+</div>

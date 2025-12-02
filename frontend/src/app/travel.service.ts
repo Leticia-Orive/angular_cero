@@ -12,6 +12,8 @@ export interface Travel {
   longitude: number;
   image_url?: string;
   price?: number;
+  country?: string;
+  duration?: number;
   created_at?: string;
 }
 
