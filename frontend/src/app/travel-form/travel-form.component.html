@@ -1,0 +1,135 @@
+<div class="form-container">
+  <div class="form-header">
+    <h1>{{ isEditMode ? 'Editar Viaje' : 'Nuevo Viaje' }}</h1>
+  </div>
+
+  <div *ngIf="loading && isEditMode" class="loading">Cargando...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <form [formGroup]="travelForm" (ngSubmit)="onSubmit()" class="travel-form">
+    <div class="form-group">
+      <label for="destination">Destino *</label>
+      <input
+        type="text"
+        id="destination"
+        formControlName="destination"
+        placeholder="Ej: París, Francia"
+        class="form-control"
+      >
+      <div class="error-message" *ngIf="travelForm.get('destination')?.invalid && travelForm.get('destination')?.touched">
+        El destino es requerido
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Descripción *</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        placeholder="Describe tu viaje..."
+        rows="4"
+        class="form-control"
+      ></textarea>
+      <div class="error-message" *ngIf="travelForm.get('description')?.invalid && travelForm.get('description')?.touched">
+        La descripción es requerida
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label for="start_date">Fecha de Inicio *</label>
+        <input
+          type="date"
+          id="start_date"
+          formControlName="start_date"
+          class="form-control"
+        >
+        <div class="error-message" *ngIf="travelForm.get('start_date')?.invalid && travelForm.get('start_date')?.touched">
+          La fecha de inicio es requerida
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="end_date">Fecha de Fin *</label>
+        <input
+          type="date"
+          id="end_date"
+          formControlName="end_date"
+          class="form-control"
+        >
+        <div class="error-message" *ngIf="travelForm.get('end_date')?.invalid && travelForm.get('end_date')?.touched">
+          La fecha de fin es requerida
+        </div>
+      </div>
+    </div>
+
+    <div class="location-section">
+      <h3>Ubicación en el Mapa</h3>
+      <button type="button" (click)="useCurrentLocation()" class="btn-location">
+        📍 Usar mi ubicación actual
+      </button>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="latitude">Latitud *</label>
+          <input
+            type="number"
+            id="latitude"
+            formControlName="latitude"
+            step="0.000001"
+            placeholder="Ej: 48.8566"
+            class="form-control"
+          >
+          <div class="error-message" *ngIf="travelForm.get('latitude')?.invalid && travelForm.get('latitude')?.touched">
+            Latitud inválida (-90 a 90)
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="longitude">Longitud *</label>
+          <input
+            type="number"
+            id="longitude"
+            formControlName="longitude"
+            step="0.000001"
+            placeholder="Ej: 2.3522"
+            class="form-control"
+          >
+          <div class="error-message" *ngIf="travelForm.get('longitude')?.invalid && travelForm.get('longitude')?.touched">
+            Longitud inválida (-180 a 180)
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="image_url">URL de la Imagen</label>
+      <input
+        type="url"
+        id="image_url"
+        formControlName="image_url"
+        placeholder="https://ejemplo.com/imagen.jpg"
+        class="form-control"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="price">Precio (opcional)</label>
+      <input
+        type="number"
+        id="price"
+        formControlName="price"
+        step="0.01"
+        placeholder="0.00"
+        class="form-control"
+      >
+    </div>
+
+    <div class="form-actions">
+      <button type="button" (click)="cancel()" class="btn-cancel">Cancelar</button>
+      <button type="submit" [disabled]="travelForm.invalid || loading" class="btn-submit">
+        {{ loading ? 'Guardando...' : (isEditMode ? 'Actualizar' : 'Crear') }}
+      </button>
+    </div>
+  </form>
+</div>

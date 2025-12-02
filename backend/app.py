@@ -34,6 +34,35 @@ class User(db.Model):
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
 
+# Modelo de Viajes
+class Travel(db.Model):
+    __tablename__ = 'travels'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    destination = db.Column(db.String(200), nullable=False)
+    description = db.Column(db.Text)
+    start_date = db.Column(db.Date, nullable=False)
+    end_date = db.Column(db.Date, nullable=False)
+    latitude = db.Column(db.Float, nullable=False)
+    longitude = db.Column(db.Float, nullable=False)
+    image_url = db.Column(db.String(500))
+    price = db.Column(db.Float)
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'destination': self.destination,
+            'description': self.description,
+            'start_date': self.start_date.isoformat() if self.start_date else None,
+            'end_date': self.end_date.isoformat() if self.end_date else None,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'image_url': self.image_url,
+            'price': self.price,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
+
 # Rutas
 @app.route('/api/health', methods=['GET'])
 def health_check():
@@ -94,6 +123,88 @@ def delete_user(user_id):
         db.session.delete(user)
         db.session.commit()
         return jsonify({'message': 'User deleted successfully'}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
+
+# ========== RUTAS DE VIAJES ==========
+
+@app.route('/api/travels', methods=['GET'])
+def get_travels():
+    try:
+        travels = Travel.query.order_by(Travel.start_date.desc()).all()
+        return jsonify([travel.to_dict() for travel in travels]), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/travels', methods=['POST'])
+def create_travel():
+    try:
+        data = request.get_json()
+        from datetime import datetime
+        
+        new_travel = Travel(
+            destination=data.get('destination'),
+            description=data.get('description'),
+            start_date=datetime.fromisoformat(data.get('start_date')),
+            end_date=datetime.fromisoformat(data.get('end_date')),
+            latitude=float(data.get('latitude')),
+            longitude=float(data.get('longitude')),
+            image_url=data.get('image_url'),
+            price=float(data.get('price')) if data.get('price') else None
+        )
+        db.session.add(new_travel)
+        db.session.commit()
+        return jsonify(new_travel.to_dict()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/travels/<int:travel_id>', methods=['GET'])
+def get_travel(travel_id):
+    try:
+        travel = Travel.query.get_or_404(travel_id)
+        return jsonify(travel.to_dict()), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 404
+
+@app.route('/api/travels/<int:travel_id>', methods=['PUT'])
+def update_travel(travel_id):
+    try:
+        travel = Travel.query.get_or_404(travel_id)
+        data = request.get_json()
+        from datetime import datetime
+        
+        if 'destination' in data:
+            travel.destination = data['destination']
+        if 'description' in data:
+            travel.description = data['description']
+        if 'start_date' in data:
+            travel.start_date = datetime.fromisoformat(data['start_date'])
+        if 'end_date' in data:
+            travel.end_date = datetime.fromisoformat(data['end_date'])
+        if 'latitude' in data:
+            travel.latitude = float(data['latitude'])
+        if 'longitude' in data:
+            travel.longitude = float(data['longitude'])
+        if 'image_url' in data:
+            travel.image_url = data['image_url']
+        if 'price' in data:
+            travel.price = float(data['price']) if data['price'] else None
+            
+        db.session.commit()
+        return jsonify(travel.to_dict()), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/travels/<int:travel_id>', methods=['DELETE'])
+def delete_travel(travel_id):
+    try:
+        travel = Travel.query.get_or_404(travel_id)
+        db.session.delete(travel)
+        db.session.commit()
+        return jsonify({'message': 'Travel deleted successfully'}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 400

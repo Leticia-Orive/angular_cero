@@ -1,0 +1,46 @@
+<div class="map-container">
+  <div class="map-header">
+    <button (click)="goBack()" class="btn-back">← Volver</button>
+    <h1>{{ travel?.destination || 'Cargando...' }}</h1>
+    <button *ngIf="travel" (click)="editTravel()" class="btn-edit">Editar</button>
+  </div>
+
+  <div *ngIf="loading" class="loading">Cargando viaje...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div class="content-grid" *ngIf="travel && !loading">
+    <div class="info-panel">
+      <div class="travel-image">
+        <img [src]="getImageUrl()" [alt]="travel.destination">
+      </div>
+
+      <div class="travel-details">
+        <h2>{{ travel.destination }}</h2>
+
+        <div class="detail-item">
+          <strong>📝 Descripción:</strong>
+          <p>{{ travel.description }}</p>
+        </div>
+
+        <div class="detail-item">
+          <strong>📅 Fechas:</strong>
+          <p>{{ travel.start_date | date:'dd/MM/yyyy' }} - {{ travel.end_date | date:'dd/MM/yyyy' }}</p>
+        </div>
+
+        <div class="detail-item">
+          <strong>📍 Coordenadas:</strong>
+          <p>Lat: {{ travel.latitude }}, Lng: {{ travel.longitude }}</p>
+        </div>
+
+        <div class="detail-item" *ngIf="travel.price">
+          <strong>💰 Precio:</strong>
+          <p>${{ travel.price }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-panel">
+      <div id="map"></div>
+    </div>
+  </div>
+</div>

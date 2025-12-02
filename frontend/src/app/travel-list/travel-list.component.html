@@ -1,0 +1,41 @@
+<div class="travel-list-container">
+  <div class="header">
+    <h1>Mis Viajes</h1>
+    <a routerLink="/travels/new" class="btn-primary">+ Nuevo Viaje</a>
+  </div>
+
+  <div *ngIf="loading" class="loading">Cargando viajes...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+
+  <div class="travels-grid" *ngIf="!loading && travels.length > 0">
+    <div class="travel-card" *ngFor="let travel of travels">
+      <div class="travel-image">
+        <img [src]="getImageUrl(travel)" [alt]="travel.destination">
+        <div class="price-tag" *ngIf="travel.price">
+          ${{ travel.price }}
+        </div>
+      </div>
+      <div class="travel-content">
+        <h3>{{ travel.destination }}</h3>
+        <p class="description">{{ travel.description }}</p>
+        <div class="travel-dates">
+          <span>📅 {{ travel.start_date | date:'dd/MM/yyyy' }} - {{ travel.end_date | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="travel-location">
+          <span>📍 {{ travel.latitude }}, {{ travel.longitude }}</span>
+        </div>
+        <div class="travel-actions">
+          <a [routerLink]="['/travels', travel.id]" class="btn-view">Ver en Mapa</a>
+          <a [routerLink]="['/travels/edit', travel.id]" class="btn-edit">Editar</a>
+          <button (click)="deleteTravel(travel.id!)" class="btn-delete">Eliminar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="!loading && travels.length === 0" class="empty-state">
+    <h2>No hay viajes registrados</h2>
+    <p>Comienza agregando tu primer viaje</p>
+    <a routerLink="/travels/new" class="btn-primary">+ Agregar Viaje</a>
+  </div>
+</div>
