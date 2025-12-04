@@ -5,9 +5,13 @@ import { TravelMapComponent } from './travel-map/travel-map.component';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { ClientDashboardComponent } from './client-dashboard/client-dashboard.component';
 import { TravelCatalogComponent } from './travel-catalog/travel-catalog.component';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/catalog', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   { path: 'catalog', component: TravelCatalogComponent },
   { path: 'client', component: ClientDashboardComponent },
   { path: 'admin', component: AdminDashboardComponent },

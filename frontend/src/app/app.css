@@ -32,6 +32,10 @@
   border-radius: 6px;
   transition: background-color 0.3s ease;
   font-weight: 500;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 .nav-link:hover {
@@ -40,6 +44,10 @@
 
 .nav-link.active {
   background-color: rgba(255,255,255,0.2);
+}
+
+.btn-logout {
+  cursor: pointer;
 }
 
 .main-content {

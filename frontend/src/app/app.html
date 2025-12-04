@@ -7,15 +7,25 @@
       <a routerLink="/catalog" routerLinkActive="active" class="nav-link">
         🌍 Catálogo
       </a>
-      <a routerLink="/travels" routerLinkActive="active" class="nav-link">
+      <a routerLink="/travels" routerLinkActive="active" class="nav-link" *ngIf="authService.isAuthenticated()">
         ✈️ Mis Viajes
       </a>
-      <a routerLink="/client" routerLinkActive="active" class="nav-link">
+      <a routerLink="/client" routerLinkActive="active" class="nav-link" *ngIf="authService.isAuthenticated()">
         👤 Cliente
       </a>
-      <a routerLink="/admin" routerLinkActive="active" class="nav-link">
+      <a routerLink="/admin" routerLinkActive="active" class="nav-link" *ngIf="authService.isAdmin()">
         ⚙️ Admin
       </a>
+
+      <a routerLink="/login" routerLinkActive="active" class="nav-link" *ngIf="!authService.isAuthenticated()">
+        🔑 Iniciar Sesión
+      </a>
+      <a routerLink="/register" routerLinkActive="active" class="nav-link" *ngIf="!authService.isAuthenticated()">
+        📝 Registrarse
+      </a>
+      <button class="nav-link btn-logout" (click)="logout()" *ngIf="authService.isAuthenticated()">
+        🚪 Cerrar Sesión
+      </button>
     </div>
   </nav>
 

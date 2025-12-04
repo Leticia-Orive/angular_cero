@@ -1,29 +1,34 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, session
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+from werkzeug.security import generate_password_hash, check_password_hash
 import os
 
 # Cargar variables de entorno
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, supports_credentials=True, origins=['http://localhost:4200'])
 
 # Configuración de la base de datos MySQL
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key')
 app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/{os.getenv('DB_NAME')}"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = False
 
 db = SQLAlchemy(app)
 
-# Modelo de ejemplo
+# Modelo de Usuario con autenticación
 class User(db.Model):
     __tablename__ = 'users'
     
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(20), default='user')  # 'user' o 'admin'
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     
     def to_dict(self):
@@ -31,6 +36,7 @@ class User(db.Model):
             'id': self.id,
             'name': self.name,
             'email': self.email,
+            'role': self.role,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
 
@@ -93,6 +99,89 @@ class UserTravel(db.Model):
             'duration': self.duration,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
+
+# ========== RUTAS DE AUTENTICACIÓN ==========
+
+@app.route('/api/auth/register', methods=['POST'])
+def register():
+    try:
+        data = request.get_json()
+        
+        # Validar datos requeridos
+        if not data.get('name') or not data.get('email') or not data.get('password'):
+            return jsonify({'error': 'Nombre, email y contraseña son requeridos'}), 400
+        
+        # Verificar si el usuario ya existe
+        if User.query.filter_by(email=data['email']).first():
+            return jsonify({'error': 'El email ya está registrado'}), 409
+        
+        # Crear nuevo usuario
+        new_user = User(
+            name=data['name'],
+            email=data['email'],
+            password=generate_password_hash(data['password']),
+            role=data.get('role', 'user')  # por defecto 'user', puede ser 'admin'
+        )
+        
+        db.session.add(new_user)
+        db.session.commit()
+        
+        # Crear sesión
+        session['user_id'] = new_user.id
+        session['user_role'] = new_user.role
+        
+        return jsonify({
+            'message': 'Usuario registrado exitosamente',
+            'user': new_user.to_dict()
+        }), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/auth/login', methods=['POST'])
+def login():
+    try:
+        data = request.get_json()
+        
+        # Validar datos
+        if not data.get('email') or not data.get('password'):
+            return jsonify({'error': 'Email y contraseña son requeridos'}), 400
+        
+        # Buscar usuario
+        user = User.query.filter_by(email=data['email']).first()
+        
+        if not user or not check_password_hash(user.password, data['password']):
+            return jsonify({'error': 'Credenciales inválidas'}), 401
+        
+        # Crear sesión
+        session['user_id'] = user.id
+        session['user_role'] = user.role
+        
+        return jsonify({
+            'message': 'Login exitoso',
+            'user': user.to_dict()
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
+
+@app.route('/api/auth/logout', methods=['POST'])
+def logout():
+    session.clear()
+    return jsonify({'message': 'Logout exitoso'}), 200
+
+@app.route('/api/auth/current-user', methods=['GET'])
+def get_current_user():
+    if 'user_id' not in session:
+        return jsonify({'error': 'No autenticado'}), 401
+    
+    user = User.query.get(session['user_id'])
+    if not user:
+        session.clear()
+        return jsonify({'error': 'Usuario no encontrado'}), 404
+    
+    return jsonify({'user': user.to_dict()}), 200
 
 # Rutas
 @app.route('/api/health', methods=['GET'])
