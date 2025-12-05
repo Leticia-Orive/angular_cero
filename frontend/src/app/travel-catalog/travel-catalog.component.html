@@ -82,7 +82,7 @@
         <span class="results-count">{{ filteredTravels.length }} viajes</span>
       </div>
 
-      <div class="travels-grid" *ngIf="!loading && filteredTravels.length > 0">
+      <div class="travels-grid" *ngIf="filteredTravels.length > 0">
         <div class="travel-card" *ngFor="let travel of filteredTravels">
           <div class="card-image">
             <img [src]="travel.image_url || 'https://via.placeholder.com/400x250?text=' + travel.destination"

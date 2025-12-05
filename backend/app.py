@@ -56,6 +56,22 @@ class Travel(db.Model):
     country = db.Column(db.String(100))
     duration = db.Column(db.Integer)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'destination': self.destination,
+            'description': self.description,
+            'start_date': self.start_date.isoformat() if self.start_date else None,
+            'end_date': self.end_date.isoformat() if self.end_date else None,
+            'latitude': self.latitude,
+            'longitude': self.longitude,
+            'image_url': self.image_url,
+            'price': self.price,
+            'country': self.country,
+            'duration': self.duration,
+            'created_at': self.created_at.isoformat() if self.created_at else None
+        }
 
 # Modelo de Viajes del Usuario (Mis Viajes)
 class UserTravel(db.Model):
@@ -82,22 +98,6 @@ class UserTravel(db.Model):
             'notes': self.notes,
             'travel': self.travel.to_dict() if self.travel else None,
             'user': {'id': self.user.id, 'name': self.user.name, 'email': self.user.email} if self.user else None
-        }
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'destination': self.destination,
-            'description': self.description,
-            'start_date': self.start_date.isoformat() if self.start_date else None,
-            'end_date': self.end_date.isoformat() if self.end_date else None,
-            'latitude': self.latitude,
-            'longitude': self.longitude,
-            'image_url': self.image_url,
-            'price': self.price,
-            'country': self.country,
-            'duration': self.duration,
-            'created_at': self.created_at.isoformat() if self.created_at else None
         }
 
 # ========== RUTAS DE AUTENTICACIÓN ==========

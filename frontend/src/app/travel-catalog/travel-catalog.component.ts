@@ -80,6 +80,7 @@ export class TravelCatalogComponent implements OnInit {
         console.log('✅ Mis viajes recibidos:', myTravels.length);
         this.myTravels = myTravels;
         this.loading = false;
+        console.log('📊 Estado final - Loading:', this.loading, 'Viajes disponibles:', this.availableTravels.length, 'Viajes filtrados:', this.filteredTravels.length);
       },
       error: (err) => {
         console.error('⚠️ Error al cargar mis viajes:', err);
