@@ -2,6 +2,18 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface Accommodation {
+  name: string;
+  type: string;
+  description: string;
+}
+
+export interface Restaurant {
+  name: string;
+  cuisine: string;
+  description: string;
+}
+
 export interface Travel {
   id?: number;
   destination: string;
@@ -14,6 +26,10 @@ export interface Travel {
   price?: number;
   country?: string;
   duration?: number;
+  attractions?: string[];
+  accommodations?: Accommodation[];
+  restaurants?: Restaurant[];
+  tips?: string[];
   created_at?: string;
 }
 
@@ -30,6 +46,10 @@ export class TravelService {
   }
 
   getTravel(id: number): Observable<Travel> {
+    return this.http.get<Travel>(`${this.apiUrl}/travels/${id}`);
+  }
+
+  getTravelById(id: number): Observable<Travel> {
     return this.http.get<Travel>(`${this.apiUrl}/travels/${id}`);
   }
 

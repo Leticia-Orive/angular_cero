@@ -1,0 +1,150 @@
+<div class="travel-details-container">
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Cargando detalles del viaje...</p>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+    <button class="btn btn-secondary" (click)="goBack()">Volver al Catálogo</button>
+  </div>
+
+  <div *ngIf="travel && !loading" class="details-content">
+    <!-- Header con imagen -->
+    <div class="details-header">
+      <button class="btn-back" (click)="goBack()">
+        ← Volver al Catálogo
+      </button>
+      <div class="header-image">
+        <img [src]="travel.image_url || 'https://via.placeholder.com/1200x400?text=' + travel.destination"
+             [alt]="travel.destination">
+        <div class="header-overlay">
+          <h1>{{ travel.destination }}</h1>
+          <p class="country-name" *ngIf="travel.country">{{ travel.country }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Información principal -->
+    <div class="details-body">
+      <div class="main-section">
+        <!-- Descripción General -->
+        <section class="info-section">
+          <h2>Descripción</h2>
+          <p class="description">{{ travel.description }}</p>
+        </section>
+
+        <!-- Detalles del viaje -->
+        <section class="info-section travel-info">
+          <h2>Información del Viaje</h2>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-icon">📅</span>
+              <div class="info-content">
+                <strong>Fechas</strong>
+                <p>{{ travel.start_date }} - {{ travel.end_date }}</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">⏱️</span>
+              <div class="info-content">
+                <strong>Duración</strong>
+                <p>{{ travel.duration }} días</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">💰</span>
+              <div class="info-content">
+                <strong>Precio</strong>
+                <p class="price">${{ travel.price }}</p>
+              </div>
+            </div>
+            <div class="info-item">
+              <span class="info-icon">📍</span>
+              <div class="info-content">
+                <strong>Ubicación</strong>
+                <p>Lat: {{ travel.latitude }}, Lon: {{ travel.longitude }}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Qué Ver -->
+        <section class="info-section">
+          <h2>🏛️ Qué Ver</h2>
+          <div class="attractions-list" *ngIf="travel.attractions && travel.attractions.length > 0">
+            <div class="attraction-item" *ngFor="let attraction of travel.attractions">
+              <h4>{{ attraction }}</h4>
+            </div>
+          </div>
+          <div *ngIf="!travel.attractions || travel.attractions.length === 0" class="empty-content">
+            <p>Principales atracciones turísticas, monumentos históricos, museos y lugares emblemáticos que no te puedes perder en {{ travel.destination }}.</p>
+          </div>
+        </section>
+
+        <!-- Dónde Alojarse -->
+        <section class="info-section">
+          <h2>🏨 Dónde Alojarse</h2>
+          <div class="accommodations-list" *ngIf="travel.accommodations && travel.accommodations.length > 0">
+            <div class="accommodation-item" *ngFor="let accommodation of travel.accommodations">
+              <h4>{{ accommodation.name }}</h4>
+              <p class="accommodation-type">{{ accommodation.type }}</p>
+              <p class="accommodation-description">{{ accommodation.description }}</p>
+            </div>
+          </div>
+          <div *ngIf="!travel.accommodations || travel.accommodations.length === 0" class="empty-content">
+            <p>Recomendaciones de hoteles, hostales y zonas residenciales ideales para hospedarte durante tu visita a {{ travel.destination }}.</p>
+          </div>
+        </section>
+
+        <!-- Dónde Comer -->
+        <section class="info-section">
+          <h2>🍴 Dónde Comer</h2>
+          <div class="restaurants-list" *ngIf="travel.restaurants && travel.restaurants.length > 0">
+            <div class="restaurant-item" *ngFor="let restaurant of travel.restaurants">
+              <h4>{{ restaurant.name }}</h4>
+              <p class="restaurant-cuisine">{{ restaurant.cuisine }}</p>
+              <p class="restaurant-description">{{ restaurant.description }}</p>
+            </div>
+          </div>
+          <div *ngIf="!travel.restaurants || travel.restaurants.length === 0" class="empty-content">
+            <p>Los mejores restaurantes, cafés y lugares para degustar la gastronomía local de {{ travel.destination }}.</p>
+          </div>
+        </section>
+
+        <!-- Consejos de Viaje -->
+        <section class="info-section" *ngIf="travel.tips && travel.tips.length > 0">
+          <h2>💡 Consejos de Viaje</h2>
+          <ul class="tips-list">
+            <li *ngFor="let tip of travel.tips">{{ tip }}</li>
+          </ul>
+        </section>
+      </div>
+
+      <!-- Sidebar con acciones -->
+      <aside class="sidebar">
+        <div class="booking-card">
+          <h3>Reserva este Viaje</h3>
+          <div class="price-display">
+            <span class="price-label">Desde</span>
+            <span class="price-amount">${{ travel.price }}</span>
+            <span class="price-per">por persona</span>
+          </div>
+          <button class="btn btn-primary btn-book" (click)="addToMyTravels()">
+            Agregar a Mis Viajes
+          </button>
+        </div>
+
+        <div class="highlights-card">
+          <h3>Destacados</h3>
+          <ul class="highlights-list">
+            <li>✓ {{ travel.duration }} días de aventura</li>
+            <li>✓ Guía turístico incluido</li>
+            <li>✓ Transporte local</li>
+            <li>✓ Desayuno incluido</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>

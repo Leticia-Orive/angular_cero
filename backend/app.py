@@ -55,9 +55,45 @@ class Travel(db.Model):
     price = db.Column(db.Float)
     country = db.Column(db.String(100))
     duration = db.Column(db.Integer)
+    attractions = db.Column(db.Text)  # JSON string
+    accommodations = db.Column(db.Text)  # JSON string
+    restaurants = db.Column(db.Text)  # JSON string
+    tips = db.Column(db.Text)  # JSON string
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     
     def to_dict(self):
+        import json
+        
+        # Parsear los campos JSON
+        attractions = None
+        accommodations = None
+        restaurants = None
+        tips = None
+        
+        try:
+            if self.attractions:
+                attractions = json.loads(self.attractions)
+        except:
+            pass
+            
+        try:
+            if self.accommodations:
+                accommodations = json.loads(self.accommodations)
+        except:
+            pass
+            
+        try:
+            if self.restaurants:
+                restaurants = json.loads(self.restaurants)
+        except:
+            pass
+            
+        try:
+            if self.tips:
+                tips = json.loads(self.tips)
+        except:
+            pass
+        
         return {
             'id': self.id,
             'destination': self.destination,
@@ -70,6 +106,10 @@ class Travel(db.Model):
             'price': self.price,
             'country': self.country,
             'duration': self.duration,
+            'attractions': attractions,
+            'accommodations': accommodations,
+            'restaurants': restaurants,
+            'tips': tips,
             'created_at': self.created_at.isoformat() if self.created_at else None
         }
 
@@ -402,4 +442,4 @@ with app.app_context():
     db.create_all()
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False)
